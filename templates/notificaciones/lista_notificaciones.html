@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Notificaciones{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Notificaciones</h2>
+    
+    {% if notificaciones_no_leidas > 0 %}
+    <a href="{% url 'notificaciones:marcar_todas' %}" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-check-all"></i> Marcar todas como leídas
+    </a>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        {% for notif in notificaciones %}
+        <div class="p-3 border-bottom {% if not notif.leida %}bg-light{% endif %}">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        {% if notif.tipo == 'EXITO' %}
+                            <span class="badge bg-success">Éxito</span>
+                        {% elif notif.tipo == 'ALERTA' %}
+                            <span class="badge bg-warning text-dark">Alerta</span>
+                        {% elif notif.tipo == 'ERROR' %}
+                            <span class="badge bg-danger">Error</span>
+                        {% else %}
+                            <span class="badge bg-info">Info</span>
+                        {% endif %}
+
+                        <strong>{{ notif.titulo }}</strong>
+
+                        {% if not notif.leida %}
+                            <span class="badge bg-primary">Nueva</span>
+                        {% endif %}
+                    </div>
+                    <p class="mb-1 text-muted">{{ notif.mensaje }}</p>
+                    <small class="text-muted">{{ notif.fecha_creacion|date:"d/m/Y H:i" }}</small>
+                </div>
+
+                <div>
+                    {% if not notif.leida %}
+                    <a href="{% url 'notificaciones:marcar_leida' notif.pk %}" 
+                       class="btn btn-sm btn-outline-success" title="Marcar como leída">
+                        <i class="bi bi-check2"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="p-4 text-center text-muted">
+            <i class="bi bi-bell-slash fs-1 d-block mb-2"></i>
+            No tienes notificaciones.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

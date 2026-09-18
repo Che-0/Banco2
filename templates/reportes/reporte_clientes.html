@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Reporte de Clientes{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Reporte de Clientes</h2>
+    <div>
+        <a href="{% url 'reportes:clientes_excel' %}" class="btn btn-success">
+            <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+        </a>
+        <a href="{% url 'reportes:dashboard' %}" class="btn btn-secondary">Volver</a>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-2">
+            <div class="col-md-5">
+                <input type="text" name="q" class="form-control" placeholder="Buscar por nombre o documento..." value="{{ q }}">
+            </div>
+            <div class="col-md-3">
+                <select name="estado" class="form-select">
+                    <option value="">Todos los estados</option>
+                    <option value="ACTIVO" {% if estado_seleccionado == 'ACTIVO' %}selected{% endif %}>Activo</option>
+                    <option value="INACTIVO" {% if estado_seleccionado == 'INACTIVO' %}selected{% endif %}>Inactivo</option>
+                    <option value="BLOQUEADO" {% if estado_seleccionado == 'BLOQUEADO' %}selected{% endif %}>Bloqueado</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+            </div>
+            <div class="col-md-2">
+                <a href="{% url 'reportes:clientes' %}" class="btn btn-outline-secondary w-100">Limpiar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Documento</th>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Estado</th>
+                        <th>Fecha registro</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cliente in clientes %}
+                    <tr>
+                        <td>{{ cliente.numero_documento }}</td>
+                        <td>{{ cliente.nombre_completo }}</td>
+                        <td>{{ cliente.telefono|default:"—" }}</td>
+                        <td>{{ cliente.email|default:"—" }}</td>
+                        <td>
+                            {% if cliente.estado == 'ACTIVO' %}
+                                <span class="badge bg-success">Activo</span>
+                            {% elif cliente.estado == 'INACTIVO' %}
+                                <span class="badge bg-secondary">Inactivo</span>
+                            {% else %}
+                                <span class="badge bg-danger">Bloqueado</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ cliente.fecha_registro|date:"d/m/Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">No se encontraron clientes</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

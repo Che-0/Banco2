@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Reportes{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Reportes del Sistema</h2>
+</div>
+
+<!-- Tarjetas de resumen -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-start border-primary border-4">
+            <div class="card-body">
+                <h6 class="text-muted">Total Clientes</h6>
+                <h3>{{ total_clientes }}</h3>
+                <small class="text-success">{{ clientes_activos }} activos</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-start border-success border-4">
+            <div class="card-body">
+                <h6 class="text-muted">Cuentas Bancarias</h6>
+                <h3>{{ total_cuentas }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-start border-info border-4">
+            <div class="card-body">
+                <h6 class="text-muted">Saldo Total</h6>
+                <h3>${{ saldo_total }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-start border-warning border-4">
+            <div class="card-body">
+                <h6 class="text-muted">Transferencias (30 días)</h6>
+                <h3>{{ transferencias_mes }}</h3>
+                <small>${{ monto_transferido_mes }} movidos</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Accesos a reportes -->
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-people fs-1 text-primary mb-3"></i>
+                <h5>Reporte de Clientes</h5>
+                <p class="text-muted">Listado completo con filtros y exportación a Excel</p>
+                <a href="{% url 'reportes:clientes' %}" class="btn btn-primary">Ver reporte</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-arrow-left-right fs-1 text-success mb-3"></i>
+                <h5>Transferencias</h5>
+                <p class="text-muted">Historial de movimientos entre cuentas</p>
+                <a href="{% url 'reportes:transferencias' %}" class="btn btn-success">Ver reporte</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-file-earmark-excel fs-1 text-success mb-3"></i>
+                <h5>Exportar Excel</h5>
+                <p class="text-muted">Descargar listado de clientes en formato Excel</p>
+                <a href="{% url 'reportes:clientes_excel' %}" class="btn btn-outline-success">Descargar</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

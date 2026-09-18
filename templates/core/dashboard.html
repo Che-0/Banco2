@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Dashboard</h2>
+    <span class="text-muted">Bienvenido, {{ user.get_full_name|default:user.username }}</span>
+</div>
+
+<!-- Tarjetas de resumen -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-start border-primary border-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Clientes</h6>
+                        <h3 class="mb-0">{{ total_clientes }}</h3>
+                    </div>
+                    <i class="bi bi-people fs-1 text-primary opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-start border-success border-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Usuarios</h6>
+                        <h3 class="mb-0">{{ total_usuarios }}</h3>
+                    </div>
+                    <i class="bi bi-person-gear fs-1 text-success opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-start border-warning border-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="text-muted mb-1">Notificaciones</h6>
+                        <h3 class="mb-0">{{ notificaciones_no_leidas }}</h3>
+                    </div>
+                    <i class="bi bi-bell fs-1 text-warning opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Clientes recientes -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Clientes recientes</h5>
+                <a href="{% url 'clientes:lista_clientes' %}" class="btn btn-sm btn-outline-primary">Ver todos</a>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for cliente in clientes_recientes %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ cliente.nombre_completo }}</strong><br>
+                            <small class="text-muted">{{ cliente.numero_documento }}</small>
+                        </div>
+                        <small class="text-muted">{{ cliente.fecha_registro|date:"d/m/Y" }}</small>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted text-center">No hay clientes todavía</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificaciones recientes -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Notificaciones recientes</h5>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for notif in notificaciones_recientes %}
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <strong>{{ notif.titulo }}</strong>
+                            <small class="text-muted">{{ notif.fecha_creacion|date:"d/m H:i" }}</small>
+                        </div>
+                        <small class="text-muted">{{ notif.mensaje|truncatechars:60 }}</small>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted text-center">No tienes notificaciones</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
