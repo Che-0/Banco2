@@ -143,30 +143,32 @@ class EliminarClienteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     
 @login_required
 def portal_cliente(request):
-    # Solo los clientes pueden entrar aquí
-    if not hasattr(request.user, 'rol') or request.user.rol != 'CLIENTE':
+    if not request.user.es_cliente:
         messages.warning(request, "Esta sección es solo para clientes.")
         return redirect('core:dashboard')
 
-    try:
-        cliente = request.user.cliente
-        cuenta = cliente.cuentas.filter(estado='ACTIVA').first()
-    except Exception:
-        messages.error(request, "No tienes un perfil de cliente asociado.")
-        return redirect('core:dashboard')   # Mejor que cerrar sesión
+    cliente = getattr(request.user, 'cliente', None)
+    if cliente is None:
+        messages.error(
+            request,
+            "Tu usuario no tiene un perfil de cliente asociado. Contacta al administrador."
+        )
+        return redirect('accounts:logout')  # o a una página de error, pero NO al dashboard
+
+    cuenta = cliente.cuentas.filter(estado='ACTIVA').first()
 
     transferencias = []
     if cuenta:
+        from django.db.models import Q
         transferencias = Transferencia.objects.filter(
-            models.Q(cuenta_origen=cuenta) | models.Q(cuenta_destino=cuenta)
+            Q(cuenta_origen=cuenta) | Q(cuenta_destino=cuenta)
         ).order_by('-fecha')[:10]
 
-    context = {
+    return render(request, 'clientes/portal_cliente.html', {
         'cliente': cliente,
         'cuenta': cuenta,
         'transferencias': transferencias,
-    }
-    return render(request, 'clientes/portal_cliente.html', context)
+    })
 
 @login_required
 def realizar_transferencia(request):

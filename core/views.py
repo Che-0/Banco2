@@ -10,7 +10,6 @@ from django.shortcuts import redirect
 
 @login_required
 def dashboard(request):
-    # Los clientes no deben ver este dashboard
     if request.user.es_cliente:
         return redirect('clientes:portal')
 
