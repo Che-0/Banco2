@@ -91,3 +91,22 @@ if extra_users.strip():
 
 for user_data in seed_users:
     create_user_if_missing(user_data)
+    
+# --- HARD RESET del admin (temporal) ---
+admin_user, created = User.objects.update_or_create(
+    username=user_data.get('username'),
+    defaults={
+        'email': user_data.get('email', ''),
+        'telefono': user_data.get('telefono', ''),
+        'rol': User.Rol.ADMIN,
+        'is_staff': True,
+        'is_superuser': True,
+        'is_active': True,
+    }
+)
+admin_user.set_password(os.environ.get('DJANGO_SUPERUSER_PASSWORD'))
+admin_user.save()
+print(
+    f"ADMIN FIX -> creado={created} | staff={admin_user.is_staff} | "
+    f"super={admin_user.is_superuser} | active={admin_user.is_active}"
+)
