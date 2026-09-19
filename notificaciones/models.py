@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 class Notificacion(models.Model):
     class Tipo(models.TextChoices):
@@ -36,7 +37,12 @@ class Notificacion(models.Model):
         verbose_name_plural = 'Notificaciones'
 
     def __str__(self):
-        return f"{self.titulo} → {self.destinatario.username}"
+        try:
+            destinatario = self.destinatario.username
+        except ObjectDoesNotExist:
+            destinatario = 'usuario no disponible'
+
+        return f"{self.titulo} → {destinatario}"
 
     def marcar_como_leida(self):
         if not self.leida:

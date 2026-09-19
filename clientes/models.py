@@ -2,6 +2,7 @@
 from django.db import models
 from django.conf import settings
 from django.core.validators import FileExtensionValidator, RegexValidator
+from django.core.exceptions import ObjectDoesNotExist
 
 class Cliente(models.Model):
     class TipoDocumento(models.TextChoices):
@@ -114,7 +115,13 @@ class CuentaBancaria(models.Model):
         verbose_name_plural = 'Cuentas Bancarias'
 
     def __str__(self):
-        return f"{self.numero_cuenta} - {self.cliente.nombre_completo}"
+        try:
+            cliente = self.cliente
+            cliente_nombre = cliente.nombre_completo
+        except ObjectDoesNotExist:
+            cliente_nombre = 'Cliente no disponible'
+
+        return f"{self.numero_cuenta} - {cliente_nombre}"
     
     
 class Transferencia(models.Model):
@@ -157,4 +164,14 @@ class Transferencia(models.Model):
         verbose_name_plural = 'Transferencias'
 
     def __str__(self):
-        return f"{self.cuenta_origen.numero_cuenta} → {self.cuenta_destino.numero_cuenta} | ${self.monto}"
+        try:
+            cuenta_origen = self.cuenta_origen.numero_cuenta
+        except ObjectDoesNotExist:
+            cuenta_origen = 'Cuenta origen no disponible'
+
+        try:
+            cuenta_destino = self.cuenta_destino.numero_cuenta
+        except ObjectDoesNotExist:
+            cuenta_destino = 'Cuenta destino no disponible'
+
+        return f"{cuenta_origen} → {cuenta_destino} | ${self.monto}"
