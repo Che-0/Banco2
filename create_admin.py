@@ -19,10 +19,6 @@ def create_user_if_missing(user_data):
         print('Se omitió un usuario porque no tiene username.')
         return
 
-    if User.objects.filter(username=username).exists():
-        print(f"El usuario '{username}' ya existe.")
-        return
-
     if not password:
         print(f"Se omitió el usuario '{username}' porque no tiene contraseña.")
         return
@@ -31,6 +27,20 @@ def create_user_if_missing(user_data):
     telefono = user_data.get('telefono', '')
     rol = user_data.get('rol', User.Rol.CLIENTE)
     is_superuser = bool(user_data.get('is_superuser', False))
+
+    user = User.objects.filter(username=username).first()
+
+    if user:
+        # Actualiza contraseña y datos en cada deploy
+        user.email = email
+        user.telefono = telefono
+        user.rol = rol
+        user.is_superuser = is_superuser
+        user.is_staff = is_superuser or user.is_staff
+        user.set_password(password)
+        user.save()
+        print(f"Usuario '{username}' actualizado (contraseña incluida).")
+        return
 
     if is_superuser:
         User.objects.create_superuser(
@@ -50,7 +60,6 @@ def create_user_if_missing(user_data):
             rol=rol,
         )
         print(f"Usuario '{username}' creado exitosamente.")
-
 
 seed_users = [
     {
