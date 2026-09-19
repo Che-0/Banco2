@@ -26,6 +26,7 @@ def create_user_if_missing(user_data):
     email = user_data.get('email', '')
     telefono = user_data.get('telefono', '')
     rol = user_data.get('rol', User.Rol.CLIENTE)
+    is_active = bool(user_data.get('is_active', True))
     is_superuser = bool(user_data.get('is_superuser', False))
 
     user = User.objects.filter(username=username).first()
@@ -36,6 +37,7 @@ def create_user_if_missing(user_data):
         user.telefono = telefono
         user.rol = rol
         user.is_superuser = is_superuser
+        user.is_active = is_active
         user.is_staff = is_superuser or user.is_staff
         user.set_password(password)
         user.save()
@@ -69,6 +71,7 @@ seed_users = [
         'telefono': os.environ.get('DJANGO_SUPERUSER_TELEFONO', ''),
         'rol': os.environ.get('DJANGO_SUPERUSER_ROL', User.Rol.ADMIN),
         'is_superuser': os.environ.get('DJANGO_SUPERUSER_IS_SUPERUSER', 'true').lower() == 'true',
+        'is_active': os.environ.get('DJANGO_SUPERUSER_IS_ACTIVE', 'true').lower() == 'true',
     }
 ]
 
