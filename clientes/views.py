@@ -136,9 +136,9 @@ class EliminarClienteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         return es_admin_o_empleado(self.request.user)
 
-    def delete(self, request, *args, **kwargs):
+    def form_valid(self, form):
         messages.success(self.request, "Cliente eliminado correctamente.")
-        return super().delete(request, *args, **kwargs)
+        return super().form_valid(form)
     
     
 @login_required
