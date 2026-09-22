@@ -1,3 +1,4 @@
+import os
 import threading
 from django.core.mail import send_mail
 from django.conf import settings
@@ -17,12 +18,21 @@ def notificar_inicio_sesion(sender, user, request, **kwargs):
     if user.email:
         asunto = 'Alerta de Seguridad: Nuevo inicio de sesión'
         mensaje = f'Hola {user.username},\n\nSe ha detectado un nuevo inicio de sesión en tu cuenta de Banco2.'
-        remitente = settings.EMAIL_HOST_USER
-        destinatarios = [user.email]
+        
+        # Usar None toma directamente settings.DEFAULT_FROM_EMAIL
+        remitente = None 
+        
+        # Obtenemos el correo y lo metemos dentro de una lista [...]
+        correo_destino = os.environ.get('EMAIL_RESEND', '').strip()
+        
+        if not correo_destino:
+            print("Aviso: EMAIL_RESEND no está configurado en las variables de entorno.")
+            return
 
-        # En lugar de usar send_mail() directamente, creamos un hilo
+        destinatarios = [correo_destino]
+
         hilo = threading.Thread(
             target=enviar_correo_en_hilo, 
             args=(asunto, mensaje, remitente, destinatarios)
         )
-        hilo.start() # Iniciamos el hilo paralelo
+        hilo.start()

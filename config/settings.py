@@ -48,6 +48,9 @@ INSTALLED_APPS = [
     'notificaciones',
     'reportes',
     'core',
+    
+    #correo con resend
+    "anymail",
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -170,10 +173,25 @@ if not DEBUG:
 
 
 # Configuración para envío de correos con Gmail
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_HOST = 'smtp.gmail.com'
+#EMAIL_PORT = 587
+#EMAIL_USE_TLS = True
+
+# Backend HTTP a través del puerto 443 (no bloqueado por Render)
+EMAIL_BACKEND = "anymail.backends.resend.EmailBackend"
+
+ANYMAIL = {
+    "RESEND_API_KEY": os.environ.get("RESEND_API_KEY"),
+}
+
+# Dirección de remitente por defecto
+# Nota: Si no has verificado un dominio propio en Resend, 
+# solo puedes usar 'onboarding@resend.dev' como remitente para pruebas.
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "onboarding@resend.dev")
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+
 
 # Toma las credenciales de las variables de entorno de Render
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')      # Tu correo de Gmail
