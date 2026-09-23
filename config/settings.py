@@ -51,6 +51,9 @@ INSTALLED_APPS = [
     
     #correo con resend
     "anymail",
+    
+    #rest
+    'rest_framework',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'

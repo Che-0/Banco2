@@ -28,6 +28,7 @@ urlpatterns = [
     path('clientes/', include('clientes.urls')),
     path('notificaciones/', include('notificaciones.urls')),
     path('reportes/', include('reportes.urls')),
+    path('api/', include('api.urls')),
 ]
 urlpatterns += [
     re_path(
