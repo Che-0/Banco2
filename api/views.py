@@ -12,7 +12,7 @@ def getdata(request):
     return Response({"message": "API is working!"})
 
 @api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])  
+#@permission_classes([IsAuthenticated])  
 def clientes(request):
 
     if request.method == 'GET':
@@ -35,7 +35,7 @@ def clientes(request):
         return Response(serializer.errors, status=400)
     
 @api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
-@permission_classes([IsAuthenticated])
+#@permission_classes([IsAuthenticated])
 def get_cliente(request, id):
 
 
